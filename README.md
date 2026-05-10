@@ -7,7 +7,7 @@ A web application where employees can apply for leave and the employers can eith
 **Live URL:** http://16.16.186.125/
 
 ---
-## ✅ Features
+## Features
 
 ### Employee
 - Sign up / Log in
