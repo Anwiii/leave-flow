@@ -7,6 +7,22 @@ A web application where employees can apply for leave and the employers can eith
 **Live URL:** http://16.16.186.125/
 
 ---
+## ✅ Features
+
+### Employee
+- Sign up / Log in
+- Apply for leave (type, start date, end date, reason)
+- View all own leave requests with status (Pending / Approved / Rejected)
+- Overlap detection — cannot apply for duplicate date ranges
+- Dashboard stats (total, pending, approved, rejected)
+
+### Employer
+- Sign up / Log in
+- View all employee leave requests (with filter by status)
+- Approve or Reject requests with an optional review note
+- Dashboard stats overview
+
+---
 
 ## Project Setup
 
