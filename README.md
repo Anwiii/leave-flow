@@ -5,8 +5,9 @@ A web application where **employees** can apply for leave and **employers** can 
 ---
 
 Tech Stack: Vue.js + Tailwind CSS (Frontend), Node.js + Express (Backend), MongoDB Atlas (Database)
+
 Live URL: http://13.203.58.247
----
+
 
 ## Features
 
