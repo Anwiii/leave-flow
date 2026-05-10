@@ -34,7 +34,6 @@ A web application where employees can apply for leave and the employers can eith
 4. Network Access → Add IP Address → enter `0.0.0.0/0`
 5. Connect → Drivers → copy the connection string
 
----
 
 ### 2. AWS EC2
 
@@ -46,7 +45,6 @@ A web application where employees can apply for leave and the employers can eith
    - Firewall: enable HTTP 
 3. Once running → connect to EC2 instance
 
----
 
 ### Step 3 — Install requirements onto EC2
 
@@ -57,7 +55,6 @@ sudo apt-get install -y nodejs nginx unzip
 sudo npm install -g pm2
 ```
 
----
 
 ### Step 4 — Upload and run the code
 
