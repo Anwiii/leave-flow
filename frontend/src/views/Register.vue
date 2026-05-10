@@ -9,8 +9,8 @@
               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </div>
-        <h1 class="text-2xl font-bold text-gray-900">Welcome to LeaveFlow</h1>
-        <p class="text-gray-500 mt-1">Sign in to your account</p>
+        <h1 class="text-2xl font-bold text-gray-900">Create an account</h1>
+        <p class="text-gray-500 mt-1">Join LeaveFlow today</p>
       </div>
 
       <div class="card">
@@ -19,21 +19,19 @@
           {{ error }}
         </div>
 
-        <form @submit.prevent="handleLogin" class="space-y-4">
+        <form @submit.prevent="handleRegister" class="space-y-4">
           <div>
-            <label class="form-label">Email address</label>
-            <input
-              v-model="form.email"
-              type="email"
-              class="form-input"
-              placeholder="you@example.com"
-              required
-              autocomplete="email"
-            />
+            <label class="form-label">Full name</label>
+            <input v-model="form.name" type="text" class="form-input" placeholder="John Doe" required />
           </div>
 
           <div>
-            <label class="form-label">Password</label>
+            <label class="form-label">Email address</label>
+            <input v-model="form.email" type="email" class="form-input" placeholder="you@example.com" required />
+          </div>
+
+          <div>
+            <label class="form-label">Password <span class="text-gray-400 font-normal">(min. 6 characters)</span></label>
             <div class="relative">
               <input
                 v-model="form.password"
@@ -41,13 +39,10 @@
                 class="form-input pr-10"
                 placeholder="••••••••"
                 required
-                autocomplete="current-password"
+                minlength="6"
               />
-              <button
-                type="button"
-                @click="showPassword = !showPassword"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
+              <button type="button" @click="showPassword = !showPassword"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                 <svg v-if="!showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -59,19 +54,42 @@
             </div>
           </div>
 
-          <button
-            type="submit"
-            class="btn-primary w-full py-2.5"
-            :disabled="auth.loading"
-          >
-            <span v-if="auth.loading">Signing in…</span>
-            <span v-else>Sign in</span>
+          <!-- Role selection -->
+          <div>
+            <label class="form-label">I am a…</label>
+            <div class="grid grid-cols-2 gap-3 mt-1">
+              <button
+                v-for="r in ['employee', 'employer']"
+                :key="r"
+                type="button"
+                @click="form.role = r"
+                :class="[
+                  'py-3 rounded-lg border-2 font-medium text-sm capitalize transition-all',
+                  form.role === r
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-300',
+                ]"
+              >
+                <span v-if="r === 'employee'">👤 Employee</span>
+                <span v-else>🏢 Employer</span>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">Department <span class="text-gray-400 font-normal">(optional)</span></label>
+            <input v-model="form.department" type="text" class="form-input" placeholder="e.g. Engineering" />
+          </div>
+
+          <button type="submit" class="btn-primary w-full py-2.5" :disabled="auth.loading">
+            <span v-if="auth.loading">Creating account…</span>
+            <span v-else>Create account</span>
           </button>
         </form>
 
         <p class="text-center text-sm text-gray-500 mt-4">
-          Don't have an account?
-          <RouterLink to="/register" class="text-blue-600 hover:underline font-medium">Sign up</RouterLink>
+          Already have an account?
+          <RouterLink to="/login" class="text-blue-600 hover:underline font-medium">Sign in</RouterLink>
         </p>
       </div>
     </div>
@@ -79,24 +97,29 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
 
 const auth = useAuthStore()
 const router = useRouter()
 
-const form = ref({ email: '', password: '' })
+const form = ref({ name: '', email: '', password: '', role: 'employee', department: '' })
 const showPassword = ref(false)
 const error = ref('')
 
-const handleLogin = async () => {
+const handleRegister = async () => {
   error.value = ''
+  if (!form.value.role) {
+    error.value = 'Please select a role.'
+    return
+  }
   try {
-    await auth.login(form.value)
+    await auth.register(form.value)
     router.push(auth.isEmployee ? '/employee' : '/employer')
   } catch (err) {
-    error.value = err.response?.data?.message || 'Invalid credentials. Please try again.'
+    const errors = err.response?.data?.errors
+    error.value = errors ? errors[0].msg : err.response?.data?.message || 'Registration failed.'
   }
 }
 </script>
